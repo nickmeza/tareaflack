@@ -207,7 +207,7 @@ def eliminarcliente(id):
     try:
         producto.idcliente=id
         resp=cliente.delete()
-        resp=jsonify('Producto Elimindado')
+        resp=jsonify('Clientes Elimindado')
         resp.status_code=200
         return resp
     except Exception as e:
