@@ -4,8 +4,10 @@ from sqlalchemy import create_engine
 from json import dumps
 from UsuariDAO import Usuario
 from ProductoDao import Producto
+from ClienteDao import Cliente
 user = Usuario()
 producto = Producto()
+cliente = Cliente()
 app = Flask(__name__)
 
 
@@ -77,7 +79,7 @@ def modificarusuario():
     except Exception as e:
         print(e)
 
-#-----------------------metodos para usuario--------------------------#
+#-----------------------metodos para producto--------------------------#
 
 @app.route('/producto/listar', methods=['GET'])
 def productos():
@@ -140,6 +142,76 @@ def modificarproducto():
             return resp
     except Exception as e:
         print(e)
+
+#-----------------------metodos para cliente--------------------------#
+@app.route('/cliente/listar', methods=['GET'])
+def clientes():
+    try:
+        rows = cliente.readAll()
+        respuesta = jsonify(rows)
+        respuesta.status_code = 200
+        return respuesta
+    except Exception as e:
+        print(e)
+
+@app.route('/cliente/buscar/<int:id>')
+def buscarclient(id):
+	try:
+		cliente.idcliente = id
+		row = cliente.buscarcliente()
+		resp = jsonify(row)
+		resp.status_code = 200
+		return resp
+	except Exception as e:
+		print(e)
+
+@app.route('/cliente/create', methods=['POST'])
+def agregarcliente():
+    try:
+        _json = request.json
+        cliente.nomcliente=_json['nomcliente']
+        cliente.apellido=_json['apellido']
+        cliente.dni=_json['dni']
+        cliente.correo=_json['correo']
+        cliente.direccion=_json['direccion']
+        cliente.telefono=_json['telefono']
+        if request.method=='POST':
+            resp=cliente.agregarcliente()
+            resp=jsonify('CLIENTE')
+            resp.status_code=200
+        return resp
+    except Exception as e:
+        print(e)
+
+@app.route('/cliente/modificar', methods=['PUT'])
+def modificarcliente():
+    try:
+        _json=request.json
+        cliente.nomcliente=_json['nomcliente']
+        cliente.apellido=_json['apellido']
+        cliente.dni=_json['dni']
+        cliente.correo=_json['correo']
+        cliente.direccion=_json['direccion']
+        cliente.telefono=_json['telefono']
+        cliente.idcliente=_json['idcliente']
+        if request.method == 'PUT':
+            resp = cliente.modificarcliente()
+            resp = jsonify('Cliente Modificada')
+            resp.status_code=200
+            return resp
+    except Exception as e:
+        print(e)
+
+@app.route('/cliente/eliminar/<int:id>', methods=['GET'])
+def eliminarcliente(id):
+    try:
+        producto.idcliente=id
+        resp=cliente.delete()
+        resp=jsonify('Producto Elimindado')
+        resp.status_code=200
+        return resp
+    except Exception as e:
+        print(e)  
 
 if __name__ == "__main__":
     app.run(host="localhost", port=5000, debug=True)    
